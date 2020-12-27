@@ -1,0 +1,212 @@
+#include<Keyboard.h>
+#include<Mouse.h>
+#define KEY_RETURN  0xB0
+#define KEY_LEFT_SHIFT  0x81
+int coordinX;
+int coordinY;
+unsigned long p;
+char n1;
+char n2;
+void setup(){
+// put your setup code here, to run once:
+Serial.begin(57600);
+Keyboard.begin();
+Mouse.begin();
+}
+void Brezenhem(int x1, int y1, int x2, int y2) {
+    const int deltaX = abs(x2 - x1);
+    const int deltaY = abs(y2 - y1);
+    const int signX = x1 < x2 ? 1 : -1;
+    const int signY = y1 < y2 ? 1 : -1;
+    //
+    int error = deltaX - deltaY;
+    //
+    while(x1 != x2 || y1 != y2) 
+   {
+        const int error2 = error * 2;
+        //
+        if(error2 > -deltaY) 
+        {
+            error -= deltaY;
+            x1 += signX;
+            delayMicroseconds(1);
+            Mouse.move(signX,0,0);
+        }
+        if(error2 < deltaX) 
+        {
+            error += deltaX;
+            y1 += signY;
+            delayMicroseconds(1);
+            Mouse.move(0,signY,0);
+        }
+    }
+}
+void Sell(){
+  Brezenhem(coordinX,coordinY,432,172);//наводим на вкладку продать
+  Mouse.click();
+  delay(200);
+  Brezenhem(432,172,1371,662);//наводим на слот с товаром
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Mouse.click();
+  delay(200);
+  Keyboard.releaseAll();
+  delay(200);
+  Keyboard.write('2');
+  delay(200);
+  Keyboard.write(KEY_RETURN);
+  delay(100);
+  Brezenhem(1371,662,1280,663);//наводим на пустой слот в инвинтаре
+  delay(200);
+  Mouse.click();
+  delay(300);
+  Mouse.click(MOUSE_RIGHT);
+  delay(200);
+  Brezenhem(1280,663,413,390);//наводим на стоимость товара(серебро)
+  Mouse.click();
+  Mouse.click();
+  delay(100);
+  Keyboard.print("1");
+  Brezenhem(413,390,458,390);//наводим на стоимость товара(бронза)
+  Mouse.click();
+  Mouse.click();
+  delay(100);
+  Keyboard.print("10");
+  delay(100);
+  Brezenhem(458,390,414,738);//наводим на кнопк выставить
+  delay(300);
+  Mouse.click();
+  delay(100);
+  Brezenhem(414,738,339,172);//наводим на вкладку аукционна(соседняя с продажей)
+  Mouse.click();
+  Brezenhem(339,172,coordinX,coordinY);//наводим на кнопку поиска
+  delay(100);
+  Keyboard.write('i');
+  Brezenhem(coordinX,coordinY,1529,264);//с кнопки на консоль питона
+  delay(100);
+  Mouse.click();
+  delay(100);
+  Brezenhem(1529,264,coordinX,coordinY);//с консоли на кнопку поиска
+  delay(100);
+  Keyboard.println("s");
+  delay(50);
+  Mouse.click();
+  delay(800);
+}
+void Buy(){
+  Brezenhem(coordinX,coordinY,1032,354);//На второй лот
+  delay(100);
+  Mouse.click();
+  Brezenhem(1032,354,1052,783);//Со второго лота на покупку
+  delay(100);
+  Mouse.click();
+  delay(100);
+  Brezenhem(1052,783,840,461);//C покупки на max
+  delay(100);
+  Mouse.click();
+  delay(100);
+  Brezenhem(840,461,683,562);//C max на Confirm
+  delay(100);
+  Mouse.click();
+  delay(100);
+  Brezenhem(683,562,683,542);// Наводим на другой Confirm(на всякий случай)
+  delay(100);
+  Mouse.click();
+  delay(100);
+//////////////////////////////////////////////////////////////////
+  Brezenhem(683,542,1035,309);//Наводим на первый
+  delay(100);
+  Mouse.click();
+  delay(100);
+  Brezenhem(1035,309,1052,783);//Со первого лота на покупку
+  delay(100);
+  Mouse.click();
+  delay(100);
+  Brezenhem(1052,783,840,461);//C покупки на max
+  delay(100);
+  Mouse.click();
+  delay(100);
+  Brezenhem(840,461,683,562);//C max на Confirm
+  delay(100);
+  Mouse.click();
+  delay(100);
+  Brezenhem(683,562,683,542);// Наводим на другой Confirm(на всякий случай)
+  delay(100);
+  Mouse.click();
+  delay(100);
+//////////////////////////////////////////////////////////////////
+  Brezenhem(683,542,1529,264);//C Confirm на консоль питона
+  delay(100);
+  Mouse.click();
+  delay(100);
+  Brezenhem(1529,264,coordinX,coordinY);//С консоли на кнопку поиска
+  delay(100);
+  Keyboard.println("b");
+  delay(50);
+  Mouse.click();
+  delay(800);
+}
+void Update(){
+  Mouse.click();
+  Brezenhem(coordinX,coordinY,1529,264);//На консоль Питона
+  Mouse.click();
+  Brezenhem(1529,264,1548,602);//С питона на ардуино монитор
+  delay(100);
+  Keyboard.println("y");
+  Mouse.click();
+  delay(2000);
+  Brezenhem(1548,602,coordinX,coordinY);//С монитора на кнопку  поиска
+  delay(100);
+  Mouse.click();
+}
+int go=0;
+char k;
+void loop() {
+  if(Serial.available() > 0) {
+    k=Serial.read();
+    n1=Serial.read();
+    n2=Serial.read();
+    if(k=='y'){
+      delay(2000);
+      Mouse.click();
+      delay(200);
+      Keyboard.write('p');
+      delay(100);
+      coordinX=784;//+300;
+      coordinY=211;//-30;
+      Brezenhem(500,500,coordinX,coordinY);//Тут мы вписываем координаты нашей строики поиска
+      Mouse.click();
+      delay(400);
+      Keyboard.print("Trimmed meat");//"Trimmed meat""Iron Ore""Iron Ingot""Raw Stone""Medicinal Powder""Rice"
+      delay(200);
+      Brezenhem(coordinX,coordinY,926,211);//На кнопку поиска аукциона
+      Mouse.click();
+      coordinX=926;
+      coordinY=211;
+      Brezenhem(coordinX,coordinY,1529,264);//На консоль Питона
+      delay(100);
+      Mouse.click();
+      delay(100);
+      Brezenhem(1529,264,coordinX,coordinY);//С консоли питона на кнопку поиска
+      delay(100);
+      Keyboard.println("y");
+      delay(50);
+      Mouse.click();
+      Serial.write("GO\n");
+      go=1;
+    }
+  if(go==1){
+    if(k=='s')
+      Sell();
+    if(k=='b')
+      Buy();   
+    if(k=='g')
+      go=0;  
+  }   
+ }
+ if(go==1){
+   p = millis();
+   Update();
+   delay(800);
+   Serial.println(millis()-p);
+ }
+}
